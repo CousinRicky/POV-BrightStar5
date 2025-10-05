@@ -1,17 +1,23 @@
 /* brightstar5.css
  *
- * Copyright (C) 2017 - 2021 Richard Callwood III.  Some rights reserved.
- * This file is licensed under the terms of the CC-LGPL.
- * See https://creativecommons.org/licenses/LGPL/2.1/ for more information.
+ * Copyright © 2017 - 2025 Richard Callwood III.  Some rights reserved.
+ * This file is licensed under the terms of the GNU-LGPL, version 3 or later.
+ * See https://www.gnu.org/licenses/lgpl-3.0.html for the text of the license.
  *
- * Version 1.1.2  2021-Aug-16
+ * Version 1.2  2025-Oct-05
  */
+a
+{ text-decoration:none;
+  border:1px solid; border-color:white gray gray white; border-radius:3px;
+  padding:0 2px 0 2px;
+}
 a:link    { color:#00c; }
 a:visited { color:#606; }
-a:focus   { background:#ccc; }
+a:focus   { background:#ccc; border:1px dotted gray; }
 a:hover   { background:#fbd; }
-a:active  { background:red; color:white; }
+a:active  { background:red; color:white; border:1px inset red; }
 
+a.demo { border:none; padding:0; }
 a:link    img { border:1px solid #00c; }
 a:visited img { border:1px solid #606; }
 a:focus   img { border:1px dotted #c00; }

@@ -1,23 +1,23 @@
-/* brightstar5.pov version 1.1.2
+/* brightstar5.pov version 1.2-rc.1
  * Persistence of Vision Raytracer scene description file
  * POV-Ray Object Collection demo
  *
  * A demonstration of the BrightStar5 module: a plot of stars in the Orion
  * region, using a simple cylindrical projection.
  *
- * Copyright (C) 2017 - 2021 Richard Callwood III.  Some rights reserved.
- * This file is licensed under the terms of the CC-LGPL
- * a.k.a. the GNU Lesser General Public License version 2.1.
+ * Copyright (C) 2017 - 2025 Richard Callwood III.  Some rights reserved.
+ * This file is licensed under the terms of the GNU-LGPL.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License version 2.1 as published by the Free Software Foundation.
+ * This library is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  Please
- * visit https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html for
- * the text of the GNU Lesser General Public License version 2.1.
+ * visit https://www.gnu.org/licenses/lgpl-3.0.html for the text
+ * of the GNU Lesser General Public License version 3.
  *
  * Vers.  Date         Comments
  * -----  ----         --------
@@ -26,8 +26,13 @@
  *        2015-Nov-27  Stars are labeled.
  *        2016-Dec-27  Limited labeling is added to the thumbnail.
  * 1.0    2017-Feb-04  Uploaded.
- * 1.1.2  2021-Aug-16  The POV-Ray version is auto-detected within a range, and
+ * 1.1.2  2021-Aug-16  The #version is preserved between 3.5 and 3.8, and
  *                     finishes are adapted according to the version.
+ *        2025-Feb-06  The new right ascension conversion function in
+ *                     brightstar5.inc is used.
+ *        2025-Feb-07  A spiky shape is used to represent the stars.
+ *        2025-Feb-07  The color of the star labels is changed to green.
+ * 1.2    2025-Oct-05  The license is upgraded to LGPL 3.
  */
 // +W600 +H800
 // +W160 +H120 +Obrightstar5_thumbnail +A0.0
@@ -52,7 +57,7 @@ global_settings { assumed_gamma BSC5_Gamma }
   #declare SOUTH = -12;
   #declare EAST = 6 + 34/60; // right ascension in hours
   #declare WEST = 4 + 26/60; // right ascension in hours
-  #declare BASE_MAG = 0.75;
+  #declare BASE_MAG = 2.5;
   #declare RLINE = 0.15;
   #declare FONT_SIZE = 3.0;
 #else // dimensions of full demo (3:4 portrait)
@@ -60,18 +65,15 @@ global_settings { assumed_gamma BSC5_Gamma }
   #declare SOUTH = -12;
   #declare EAST = 6.35; // right ascension in hours
   #declare WEST = 4.65; // right ascension in hours
-  #declare BASE_MAG = -0.5;
+  #declare BASE_MAG = 1.25;
   #declare RLINE = 0.05;
   #declare FONT_SIZE = 1.2;
 #end
 
-// Converts right ascension from hours to degrees:
-#declare fn_Hr_to_deg = function (x) { -15 * x }
-
 camera
 { orthographic
-  location <fn_Hr_to_deg ((EAST + WEST) / 2), (NORTH + SOUTH) / 2, -10>
-  right fn_Hr_to_deg (WEST - EAST) * x
+  location <BSC5_fn_RA_to_degrees ((EAST + WEST) / 2), (NORTH + SOUTH) / 2, -10>
+  right BSC5_fn_RA_to_degrees (WEST - EAST) * x
   up (NORTH - SOUTH) * y
 }
 
@@ -79,9 +81,24 @@ light_source { -10 * z, rgb 1 parallel point_at 0 }
 
 //============================== PLOT THE STARS ================================
 
-#default { finish { ambient 0 diffuse 1 } }
+#default { finish { ambient 0 diffuse 1.5 } }
 
-#declare Star = sphere { z, 1 }
+#declare Star = intersection
+{ prism
+  { bezier_spline -1, 0, 32
+    <0, 1>, <0.05, 0.15>, <0.05, 0.15>, <0.3, 0.3>,
+    <0.3, 0.3>, <0.15, 0.05>, <0.15, 0.05>, <1, 0>,
+    <1, 0>, <0.15, -0.05>, <0.15, -0.05>, <0.3, -0.3>,
+    <0.3, -0.3>, <0.05, -0.15>, <0.05, -0.15>, <0, -1>,
+    <0, -1>, -<0.05, 0.15>, -<0.05, 0.15>, -<0.3, 0.3>,
+    -<0.3, 0.3>, -<0.15, 0.05>, -<0.15, 0.05>, <-1, 0>,
+    <-1, 0>, <-0.15, 0.05>, <-0.15, 0.05>, <-0.3, 0.3>,
+    <-0.3, 0.3>, <-0.05, 0.15>, <-0.05, 0.15>, <0, 1>
+  }
+  sphere { -y, 1 }
+  rotate <-90, 0, 45>
+  scale <1, 1, 6>
+}
 
 #declare Ix = 0;
 #while (Ix < BSC5_N)
@@ -98,7 +115,7 @@ light_source { -10 * z, rgb 1 parallel point_at 0 }
       ( BSC5_fn_Brightness (BSC5_Data [Ix][BSC5_MAG], BASE_MAG) / Color.gray
       )
       pigment { Color }
-      translate <fn_Hr_to_deg (RA), Dec, 0>
+      translate <BSC5_fn_RA_to_degrees (RA), Dec, 0>
     }
   #end
   #declare Ix = Ix + 1;
@@ -135,14 +152,20 @@ light_source { -10 * z, rgb 1 parallel point_at 0 }
 //============================ OUTLINE THE FIGURE ==============================
 
 #default
-{ pigment { rgb <0, 0.2, 0.05> }
+{ pigment { rgb <0, 0.16, 0.04> }
   finish { ambient #if (version >= 3.7) 0 emission #end 1 diffuse 0 }
 }
 
 #macro Connect (Star1, Star2)
   cylinder
-  { <fn_Hr_to_deg (BSC5_Data[Star1][BSC5_RA]), BSC5_Data[Star1][BSC5_DEC], 10>,
-    <fn_Hr_to_deg (BSC5_Data[Star2][BSC5_RA]), BSC5_Data[Star2][BSC5_DEC], 10>,
+  { < BSC5_fn_RA_to_degrees (BSC5_Data [Star1][BSC5_RA]),
+      BSC5_Data [Star1][BSC5_DEC],
+      10
+    >,
+    < BSC5_fn_RA_to_degrees (BSC5_Data [Star2][BSC5_RA]),
+      BSC5_Data [Star2][BSC5_DEC],
+      10
+    >,
     RLINE
   }
 #end
@@ -217,7 +240,7 @@ Connect (Pi5, Pi6)
 #end
 
 #default
-{ pigment { rgb 0.5 }
+{ pigment { green 0.7 }
   finish { ambient #if (version >= 3.7) 0 emission #end 1 diffuse 0 }
 }
 
@@ -232,7 +255,7 @@ Connect (Pi5, Pi6)
     )
     scale FONT_SIZE
     translate
-    < fn_Hr_to_deg (BSC5_Data [Labels[I].z][BSC5_RA]) + Labels[I].x,
+    < BSC5_fn_RA_to_degrees (BSC5_Data [Labels[I].z][BSC5_RA]) + Labels[I].x,
       BSC5_Data [Labels[I].z][BSC5_DEC] + Labels[I].y,
       0
     >

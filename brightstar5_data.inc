@@ -1,26 +1,26 @@
-/* brightstar5_data.inc version 1.1.2
+/* brightstar5_data.inc version 1.2
  * Persistence of Vision Raytracer include file
  * POV-Ray Object Collection
  *
  * Selected data fields extracted from Hoffleit, Dorrit and Wayne H. Warren Jr.,
  * The Bright Star Catalogue, preliminary 5th ed.
- * Extracted: 2021-Aug-16.
+ * Extracted: 2025-Oct-05.
  * Source: ftp://cdsarc.u-strasbg.fr/cats/V/50/
  * Mirror: http://tdc-www.harvard.edu/catalogs/bsc5.html
  *
- * Copyright 2017 - 2021 Richard Callwood III.  Some rights reserved.
- * This file is licensed under the terms of the CC-LGPL
- * a.k.a. the GNU Lesser General Public License version 2.1.
+ * Copyright 2017 - 2025 Richard Callwood III.  Some rights reserved.
+ * This file is licensed under the terms of the GNU-LGPL.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License version 2.1 as published by the Free Software Foundation.
+ * This library is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  Please
- * visit https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html for
- * the text of the GNU Lesser General Public License version 2.1.
+ * visit https://www.gnu.org/licenses/lgpl-3.0.html for the text
+ * of the GNU Lesser General Public License version 3.
  *
  * Vers.  Date         Comments
  * -----  ----         --------
@@ -33,7 +33,8 @@
  * 1.0    2017-Feb-04  Uploaded.
  * 1.1    2017-Dec-07  The BrightStar5 version is updated.
  * 1.1.1  2019-Mar-25  View_POV_Include_Stack is utilized.
- * 1.1.2  2021-Aug-16  The POV-Ray version is auto-detected within a range.
+ * 1.1.2  2021-Aug-16  The #version is preserved between 3.5 and 3.8.
+ * 1.2    2025-Oct-05  The license is upgraded to LGPL 3.
  *
  * Implementation note: due to POV-Ray namespace scope leakage, local variables
  * and function parameters (other than x, y, and z) *must* be prefixed.
@@ -42,9 +43,9 @@
 #declare BrightStar5_Data_Inc_Temp = version;
 #version max (3.5, min (3.8, version));
 #ifdef (View_POV_Include_Stack)
-  #debug "#include \"brightstar5_data.inc\" //version 1.1.2\n"
+  #debug "#include \"brightstar5_data.inc\" //version 1.2\n"
 #end
-#declare BRIGHTSTAR5__DATA_VERSION = 1.12;
+#declare BRIGHTSTAR5__DATA_VERSION = 1.2;
 
 #declare BSC5_N = 9110;
 

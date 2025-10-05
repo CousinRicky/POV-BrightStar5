@@ -1,22 +1,22 @@
-/* brightstar5.inc version 1.1.2
+/* brightstar5.inc version 1.2-rc.1
  * Persistence of Vision Raytracer include file
  * POV-Ray Object Collection
  *
  * Processing of data extracted from the Yale Bright Star Catalogue, 5th ed.
  *
- * Copyright (C) 2017 - 2021 Richard Callwood III.  Some rights reserved.
- * This file is licensed under the terms of the CC-LGPL
- * a.k.a. the GNU Lesser General Public License version 2.1.
+ * Copyright (C) 2017 - 2025 Richard Callwood III.  Some rights reserved.
+ * This file is licensed under the terms of the GNU-LGPL.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License version 2.1 as published by the Free Software Foundation.
+ * This library is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  Please
- * visit https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html for
- * the text of the GNU Lesser General Public License version 2.1.
+ * visit https://www.gnu.org/licenses/lgpl-3.0.html for the text
+ * of the GNU Lesser General Public License version 3.
  *
  * Vers.  Date         Comments
  * -----  ----         --------
@@ -43,17 +43,21 @@
  *                     version check is reverted.
  *        2021-Aug-16  The error message for include file mismatches includes
  *                     the respective version numbers.
- * 1.1.2  2021-Aug-16  The POV-Ray version is auto-detected within a range.
+ * 1.1.2  2021-Aug-16  The #version is preserved between 3.5 and 3.8.
+ *        2024-Jan-21  Bug fix: version auto-detection is extended to the main
+ *                     include file.
+ *        2025-Feb-06  Right ascension to degrees conversion is added.
+ * 1.2    2025-Oct-05  The license is upgraded to LGPL 3.
  *
  * Implementation note: due to POV-Ray namespace scope leakage, local variables
  * and function parameters (other than x, y, and z) *must* be prefixed.
  */
 #ifndef (BrightStar5_Inc_Temp)
 #declare BrightStar5_Inc_Temp = version;
-#version 3.5;
-#declare BRIGHTSTAR5_VERSION = 1.12;
+#version max (3.5, min (3.8, version));
+#declare BRIGHTSTAR5_VERSION = 1.2;
 #ifdef (View_POV_Include_Stack)
-  #debug "#include \"brightstar5.inc\" //version 1.1.2\n"
+  #debug "#include \"brightstar5.inc\" //version 1.2-rc.1\n"
 #end
 
 #macro BSC5__Mismatch (s_File, Version)
@@ -621,6 +625,10 @@ global_settings
 { pow (100, (y - x) * 0.2)
 }
 
+//------------------
+
+#declare BSC5_fn_RA_to_degrees = function (x) { -15 * x }
+
 //----------------------- DATA CLEANUP -------------------------
 
 #macro BSC5_Update()
@@ -643,7 +651,7 @@ global_settings
  * tracing anyway.
  *
  * Most of these records retain variable star IDs, which are not extracted in
- * version 1.1.2 of BrightStar5; and two of them retain radial velocity data,
+ * version 1.2 of BrightStar5; and two of them retain radial velocity data,
  * which I have not bothered to erase.
  */
 #local bsc5_Deleted = array[14]

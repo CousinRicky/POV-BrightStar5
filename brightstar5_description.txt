@@ -1,3 +1,3 @@
 Selected data derived from the Yale Bright Star Catalogue, preliminary 5th ed. This catalog contains all nighttime stars of magnitude 6.5 and brighter (roughly all nighttime stars visible to the naked eye), plus a few dimmer ones. Macros are included for star coloration and Bayer designation labels.
 
-In version 1.1, search times are greatly reduced. Versions 1.1.1 and 1.1.2 have only minor tweaks and a bug fix.
+In version 1.1, search times are greatly reduced. Versions 1.1.1 through 1.2 have only minor updates and bug fixes, though 1.1.1 should not be used due to a design change in POV-Ray 3.8.

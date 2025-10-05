@@ -2,24 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BrightStar5 1.1.2 User Manual | POV-Ray Object Collection</title>
+<title>BrightStar5 1.2-rc.1 User Manual | POV-Ray Object Collection</title>
 <link rel="stylesheet" type="text/css" href="brightstar5.css">
 </head>
 
 <body>
 
-<h1>BrightStar5 1.1.2 User&nbsp;Manual</h1>
+<h1>BrightStar5 1.2-rc.1 User&nbsp;Manual</h1>
 
 <h2>Abstract</h2>
 
 <p>
-<a href="brightstar5.png"><img class="demo" src="brightstar5_thumbnail.png" title="Larger demo image" alt="[Thumbnail which links to a larger demo image]"></a>
+<a href="brightstar5.png" class="demo"><img src="brightstar5_thumbnail.png" title="Larger demo image" alt="[Thumbnail which links to a larger demo image]"></a>
 BrightStar5 is a library module from the
 <a href="https://www.povray.org/">Persistence of Vision Raytracer (POV-Ray)</a>
-<a href="http://lib.povray.org/">Object Collection</a>
-that presents selected data from the Yale Bright Star Catalogue, preliminary 5th edition (BSC5) in a form suitable for POV-Ray. The BSC5 contains all nighttime stars of magnitude 6.5 and brighter (roughly all nighttime stars visible to the naked eye), plus a few dimmer ones. Macros are included for star coloration and Bayer designation labels.
+<a href="https://lib.povray.org/">Object Collection</a>
+that presents selected data from the Yale Bright Star Catalogue, preliminary 5th edition (BSC5) in a form suitable for POV-Ray.
+The BSC5 contains all nighttime stars of magnitude 6.5 and brighter (roughly all nighttime stars visible to the naked eye), plus a few dimmer ones.
+Macros are included for star coloration and Bayer designation labels.
 
-<p>In version 1.1, the stars are indexed, which greatly reduces parse times when seeking stars by catalog key. Versions 1.1.1 and 1.1.2 have only minor tweaks and a bug fix.
+<p>In version 1.1, the stars are indexed, which greatly reduces parse times when seeking stars by catalog key.
+Versions 1.1.1 through 1.2 have only minor updates and bug fixes.
+Version 1.2 also adds a technical document for developers.
 
 <hr>
 
@@ -48,9 +52,10 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
    <li><a href="#BSC5_Seek_SAO">BSC5_Seek_SAO</a>
    <li><a href="#BSC5_Update">BSC5_Update</a>
   </ul>
- <li><a href="#Functions">Function</a>
+ <li><a href="#Functions">Functions</a>
   <ul>
    <li><a href="#BSC5_fn_Brightness">BSC5_fn_Brightness</a>
+   <li><a href="#BSC5_fn_RA_to_degrees">BSC5_fn_RA_to_degrees</a>
   </ul>
  <li><a href="#Other_identifiers">Other identifiers</a>
  <li><a href="#About">About BrightStar5</a>
@@ -94,28 +99,26 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
   <th>File</th>
   <th>Description</th>
  </tr><tr>
-  <td><code>README</code><var>nnnnnn</var><code>.html</code></td>
-  <td>Important information about using the POV-Ray Object Collection</td>
- </tr><tr>
   <td><code>brightstar5_description.txt</code></td>
   <td>A brief description of BrightStar5</td>
  </tr><tr>
   <td><code>brightstar5_keywords.txt</code></td>
   <td>A list of keywords</td>
  </tr><tr>
+  <td><code>brightstar5_prep.txt</code></td>
+  <td>Source code and documentation for generating the data files</td>
+ </tr><tr>
   <td><code>brightstar5_prereqs.txt</code></td>
   <td>Prerequisites</td>
  </tr><tr>
   <td><code>brightstar5.css</code></td>
-  <td rowspan="3">Other administrative files</td>
- </tr><tr>
-  <td><code>cc-LGPL-a.png</code></td>
- </tr><tr>
-  <td><code>Version</code><var>nnnnnn</var><code>.js</code></td>
+  <td>Formatting for this user manual</td>
  </tr>
 </table>
 
-<p>The italicized <var>nnnnnn</var> in some of the file names represents the 6-digit number that is in the name of the <code>.zip</code> file as downloaded from <a href="http://lib.povray.org/">lib.povray.org</a>. If you downloaded this module from some other repository, the files <code>cc-LGPL-a.png</code>, <code>README<var>nnnnnn</var>.html</code>, and <code>Version<var>nnnnnn</var>.js</code> may not be present. Please see the <a href="https://web.archive.org/web/20120419111948/http://lib.povray.org/usersguide/02using.html">Object Collection User’s Guide</a> if <code>README<var>nnnnnn</var>.html</code> is not present.
+<p>Depending on where you obtained this library, there may be other administrative files included with this download,
+including one named <code>README<var>{series-of-digits}</var>.html</code> which contains important information about using the POV-Ray Object Collection.
+Please see the <a href="https://web.archive.org/web/20120419111948/http://lib.povray.org/usersguide/02using.html">Object Collection User Guide</a> if this file is not present.
 
 <p><a href="#toc">Table of contents</a><hr>
 
@@ -123,17 +126,27 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
 
 <ul>
  <li>BrightStar5 requires POV-Ray version 3.5 or later.
- <li>The creation of <a href="https://en.wikipedia.org/wiki/Bayer_designation">Bayer designation</a> text objects requires a Unicode font that includes both the Latin and Greek alphabets. The fonts bundled with POV-Ray are not Unicode and do not contain the Greek alphabet. However, fonts that suffice are widely available; such fonts are bundled with recent versions of Microsoft Windows, Macintosh OS X, and most likely any feature-rich GNU/Linux distro, including Android.
- <li>The demo scene uses the font Times New Roman (<code>times.ttf</code>) from Monotype Imaging, which comes standard with Microsoft Windows. If you do not have this font file, you may edit the scene file to use any Unicode font that contains both the Latin and Greek alphabets.
+ <li>The creation of <a href="https://en.wikipedia.org/wiki/Bayer_designation" target="_blank">Bayer designation</a>
+  text objects requires a Unicode font that includes both the Latin and Greek alphabets.
+  The fonts bundled with POV-Ray are not Unicode and do not contain the Greek alphabet.
+  However, fonts that suffice are widely available; such fonts are bundled with recent versions of Microsoft Windows, Macintosh OS X, Android, and most likely any feature-rich GNU/Linux distro.
+ <li>The demo scene uses the font Times New Roman (<code>times.ttf</code>) from Monotype Imaging, which comes standard with Microsoft Windows.
+  If you do not have this font file, you may edit the scene file to use any Unicode font that contains both the Latin and Greek alphabets.
 </ul>
 
 <h3 id="Compliance">Namespace Compliance</h3>
 
-<p>All file names in this module and all global and local identifiers defined in the include files comply fully with the <a href="https://news.povray.org/470b46cb%241%40news.povray.org">Object Collection naming standards</a>, as <a href="https://news.povray.org/48ba92e8%241%40news.povray.org">revised August 2008</a> and <a href="https://news.povray.org/povray.object-collection/thread/%3Cweb.5018a69dae7e89cb85de7b680%40news.povray.org%3E/">proposed August 2012</a>. The files in this module may be safely stored in the same folder as other fully compliant Object Collection modules.
+<p>All file names in this module and all global and local identifiers defined in the include files comply fully with the
+ <a href="https://news.povray.org/470b46cb%241%40news.povray.org">Object Collection naming standards</a>, as
+ <a href="https://news.povray.org/48ba92e8%241%40news.povray.org">revised August 2008</a> and
+ <a href="https://news.povray.org/povray.object-collection/thread/%3Cweb.5018a69dae7e89cb85de7b680%40news.povray.org%3E/">proposed August 2012</a>.
+ The files in this module may be safely stored in the same folder as other fully compliant Object Collection modules.
 
-<p>The reserved prefixes for this module are “<code>BrightStar5</code>” and “<code>BSC5</code>,” including any uppercase and lowercase variants. To avoid conflicts, do not introduce into your scene description file any identifiers with either of these prefixes as names, or any identifiers that start with either of these prefixes plus an underscore.
+<p>The reserved prefixes for this module are “<code>BrightStar5</code>” and “<code>BSC5</code>,” including any uppercase and lowercase variants.
+To avoid conflicts, do not introduce into your scene description file any identifiers with either of these prefixes as names, or any identifiers that start with either of these prefixes plus an underscore.
 
-<p>The standard include file <code>math.inc</code> is used by <code>brightstar5.inc</code>. The identifier <code>View_POV_Include_Stack</code> from the standard include file <code>debug.inc</code> is referenced by the include files, although <code>debug.inc</code> itself is not used.
+<p>The standard include file <code>math.inc</code> is used by <code>brightstar5.inc</code>.
+The identifier <code>View_POV_Include_Stack</code> from the standard include file <code>debug.inc</code> is referenced by the include files, although <code>debug.inc</code> itself is not used.
 
 <h3 id="Usage">Usage</h3>
 
@@ -148,9 +161,13 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
   <p>Including the file more than once is harmless, though unnecessary.
 </ol>
 
-<p>In order to accommodate Greek letters, the <code>charset</code> is automatically set to <code>utf8</code>. Note that using the POV-Ray GitHub master branch (post-3.8 feature freeze) will trigger a warning about the <code>charset</code>; and if you use Bayer labels in this situation with <code>#version</code> less than 3.8, you will get a slew of possible parse error messages. However, the labels should render correctly.
+<p>In order to accommodate Greek letters, the <code>charset</code> is automatically set to <code>utf8</code>.
+Note that using the POV-Ray GitHub master branch (post-3.8 feature freeze) will trigger a warning about the <code>charset</code>;
+and if you use Bayer labels in this situation with <code>#version</code> less than 3.8, you will get a slew of possible parse error messages.
+However, the labels should render correctly.
 
-<p>At least through version 3.8.0, POV-Ray will issue a warning that the experimental feature spline is used. This is normal and expected.
+<p>At least through version 3.8.0, POV-Ray will issue a warning that the experimental feature spline is used.
+This is normal and expected.
 
 <p><a href="#toc">Table of contents</a><hr>
 
@@ -170,7 +187,8 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
    <ul>
     <li>If your <code>assumed_gamma</code> is 1.0, you do not need to set this parameter.
     <li>If your <code>assumed_gamma</code> is <code>srgb</code>, set this parameter to 2.2.
-    <li>If you omit <code>assumed_gamma</code>, the proper value will vary depending on your POV-Ray version and <code>#version</code> setting. Omitting <code>assumed_gamma</code> is not recommended.
+    <li>If you omit <code>assumed_gamma</code>, the proper value will vary depending on your POV-Ray version and <code>#version</code> setting.
+     Omitting <code>assumed_gamma</code> is not recommended.
    </ul>
    <p>Note: BrightStar5 does not actually set the scene’s <code>assumed_gamma</code>; this remains the user’s responsibility.
   </td>
@@ -182,9 +200,14 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
 
 <h2 id="Data">The Data Arrays</h2>
 
-<p>The stellar data are stored in two 2 dimensional arrays. Array <code>BSC5_Data</code> contains numerical data, and array <code>BSC5_s_Data</code> contains string data. Each row of the arrays contains data for one object. The stars are stored in order by their catalog ID, also known as the HR number. Note that the HR number is <em>not</em> the same as the array row index.
+<p>The stellar data are stored in two 2 dimensional arrays.
+Array <code>BSC5_Data</code> contains numerical data, and array <code>BSC5_s_Data</code> contains string data.
+Each row of the arrays contains data for one object.
+The stars are stored in order by their catalog ID, also known as the HR number.
+Note that the HR number is <em>not</em> the same as the array row index.
 
-<p>If a numerical field in the BSC5 is blank, then the corresponding element of <code>BSC5_Data</code> will contain the value <code>BSC5_NO_DATA</code>. If a character field in the BSC5 is blank, then the corresponding element of <code>BSC5_s_Data</code> will contain the null string.
+<p>If a numerical field in the BSC5 is blank, then the corresponding element of <code>BSC5_Data</code> will contain the value <code>BSC5_NO_DATA</code>.
+If a character field in the BSC5 is blank, then the corresponding element of <code>BSC5_s_Data</code> will contain the null string.
 
 <h3>Numeric Data Columns</h3>
 
@@ -198,7 +221,10 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
  </tr><tr>
   <td><code>BSC5_COLORBV</code>, <code>BSC5_COLOURBV</code></td>
   <td>B &minus; V color index</td>
-  <td>This is a single float value, not an RGB color. The lower the B &minus; V index value, the bluer the star; the higher the value, the redder the star. To <em>estimate</em> an RGB color, pass the value to <a href="#BSC5_Color">macro <code>BSC5_Color()</code> or <code>BSC5_Colour()</code></a>.</td>
+  <td>This is a single float value, not an RGB color.
+   The lower the B &minus; V index value, the bluer the star; the higher the value, the redder the star.
+   To <em>estimate</em> an RGB color, pass the value to <a href="#BSC5_Color">macro <code>BSC5_Color()</code> or <code>BSC5_Colour()</code></a>.
+  </td>
  </tr><tr>
   <td><code>BSC5_DEC</code></td>
   <td>J2000 declination, in degrees</td>
@@ -214,7 +240,9 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
  </tr><tr>
   <td><code>BSC5_MAG</code></td>
   <td>Visual magnitude</td>
-  <td>This is the star’s visual brightness, as seen from Earth. The higher the magnitude, the dimmer the star appears to us.</td>
+  <td>This is the star’s visual brightness, as seen from Earth.
+   The higher the magnitude, the dimmer the star appears to us.
+  </td>
  </tr><tr>
   <td><code>BSC5_PARALLAX</code></td>
   <td>Parallax, in arcseconds</td>
@@ -258,16 +286,22 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
  <tr>
   <td><code>BSC5_BAYER</code></td>
   <td>Bayer Greek letter name</td>
-  <td>Use <a href="#BSC5_Greek_char">macro <code>BSC5_Greek_char()</code></a> to convert the name to a Greek character. (This value is parsed from a larger character field in the BSC5.)</td>
+  <td>Use <a href="#BSC5_Greek_char">macro <code>BSC5_Greek_char()</code></a> to convert the name to a Greek character.
+   (This value is parsed from a larger character field in the BSC5.)
+  </td>
  </tr><tr>
   <td><code>BSC5_COMP</code></td>
   <td>Aitken’s multiple star component(s)</td>
-  <td>A component ID is a single letter. One catalog entry may have two components, in which case the component IDs are concatenated into a single string. Note that the Aitken’s catalog ID is not included in this version of BrightStar5.
+  <td>A component ID is a single letter.
+   One catalog entry may have two components, in which case the component IDs are concatenated into a single string.
+   Note that the Aitken’s catalog ID is not included in this version of BrightStar5.
   </td>
  </tr><tr>
   <td><code>BSC5_CONST</code></td>
   <td>Constellation abbreviation</td>
-  <td>This field is populated only if the star has a Bayer or Flamsteed designation. (This value is parsed from a larger character field in the BSC5.)</td>
+  <td>This field is populated only if the star has a Bayer or Flamsteed designation.
+   (This value is parsed from a larger character field in the BSC5.)
+  </td>
  </tr>
 </table>
 
@@ -275,11 +309,15 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
 
 <pre>BSC5_s_Data [BSC5_Seek_HR (2491)] [BSC5_BAYER]</pre>
 
-<h3>Non-Stellar Objects</h3>
+<h3>Deleted Objects</h3>
 
-<p>The BSC contains 14 novae and non-stellar objects whose data are mostly omitted from the 5th edition. Accordingly, the corresponding array fields are blank. Since these are the only objects in the BSC5 that are not cross-referenced to the Draper Catalogue, they can be identified by having an HD number of <code>BSC5_NO_DATA</code> in the <code>BSC5_Data</code> array. In other words, if and only if
+<p>The BSC contains 9 novae and 5 non-stellar objects whose data are mostly omitted from the 5th edition.
+Accordingly, the corresponding array fields are blank.
+Since these are the only objects in the BSC5 that are not cross-referenced to the Draper Catalogue,
+they can be identified by having an HD number of <code>BSC5_NO_DATA</code> in the <code>BSC5_Data</code> array.
+In other words, if and only if
 <blockquote><code>BSC5_Data [<var>MyIndex</var>] [BSC5_HD] = BSC5_NO_DATA</code></blockquote>
-<p>then the object at the array row <var>MyIndex</var> is not a star, and has no associated astrometric data.
+<p>then the object at the array row <var>MyIndex</var> has no associated astrometric data.
 
 <p><a href="#toc">Table of contents</a><hr>
 
@@ -287,7 +325,12 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
 
 <h3 id="BSC5_Bayer_label">BSC5_Bayer_label (s_Letter, Super, s_Const, s_Comp, s_Font)</h3>
 
-<p>Creates a text object of a star’s <a href="https://en.wikipedia.org/wiki/Bayer_designation">Bayer designation</a>. The front of the object will lie in the <var>x</var>-<var>y</var> plane, and the object will be one unit deep in the <var>z</var> direction. If <code>s_Letter</code> is a Greek letter name, then that letter’s lowercase glyph will be rendered; otherwise the string will be rendered as-is. The Greek letter name test is not case sensitive. A null string <code>s_Letter</code> will cause a parse error. No other validity checks are performed.
+<p>Creates a text object of a star’s <a href="https://en.wikipedia.org/wiki/Bayer_designation" target="_blank">Bayer designation</a>.
+The front of the object will lie in the <var>x</var>-<var>y</var> plane, and the object will be one unit deep in the <var>z</var> direction.
+If <code>s_Letter</code> is a Greek letter name, then that letter’s lowercase glyph will be rendered; otherwise the string will be rendered as-is.
+The Greek letter name test is not case sensitive.
+A null string <code>s_Letter</code> will cause a parse error.
+No other validity checks are performed.
 
 <h4>Arguments</h4>
 <table>
@@ -295,7 +338,9 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
  <tr>
   <td><code>s_Letter</code></td>
   <td>string</td>
-  <td>The Greek letter name, e.g., <code>"alpha"</code>, or a Latin letter string. The Greek letter name test is not case sensitive.</td>
+  <td>The Greek letter name, e.g., <code>"alpha"</code>, or a Latin letter string.
+   The Greek letter name test is not case sensitive.
+  </td>
  </tr><tr>
   <td><code>Super</code></td>
   <td>float</td>
@@ -319,7 +364,9 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
 
 <h3 id="BSC5_Bayer_label_by_index">BSC5_Bayer_label_by_index (Index, Const, Comp, s_Font)</h3>
 
-<p>Creates a text object of a star’s <a href="https://en.wikipedia.org/wiki/Bayer_designation">Bayer designation</a>. The front of the object will lie in the <var>x</var>-<var>y</var> plane, and the object will be one unit deep in the <var>z</var> direction. If the star index is invalid or the star has no Greek letter Bayer designation, then a parse error will result.
+<p>Creates a text object of a star’s <a href="https://en.wikipedia.org/wiki/Bayer_designation" target="_blank">Bayer designation</a>.
+The front of the object will lie in the <var>x</var>-<var>y</var> plane, and the object will be one unit deep in the <var>z</var> direction.
+If the star index is invalid or the star has no Greek letter Bayer designation, then a parse error will result.
 
 <h4>Arguments</h4>
 <table>
@@ -348,11 +395,15 @@ that presents selected data from the Yale Bright Star Catalogue, preliminary 5th
 <h3 id="BSC5_Color">BSC5_Color (BminusV)
 <br>BSC5_Colour (BminusV)</h3>
 
-<p>These return an RGB <em>estimate</em> of the color of a star based on its B &minus; V index. The color space is assumed to be <a href="https://en.wikipedia.org/wiki/SRGB">sRGB</a>. The B &minus; V value will be clipped to the domain &minus;0.374 through +6.0. The color will be normalized such that the highest primary color value is 1.0.
+<p>These return an RGB <em>estimate</em> of the color of a star based on its B &minus; V index.
+The color space is assumed to be <a href="https://en.wikipedia.org/wiki/SRGB" target="_blank">sRGB</a>.
+The B &minus; V value will be clipped to the domain &minus;0.374 through +6.0.
+The color will be normalized such that the highest primary color value is 1.0.
 
 <p>If the B &minus; V value is <code>BSC5_NO_DATA</code>, then the color white (<code>rgb 1</code>) will be returned.
 
-<p>If you set <code>assumed_gamma</code> to any value other than 1.0, remember to declare <code>BSC5_Gamma</code> with that same value prior to calling either of these macros.
+<p>If you set <code>assumed_gamma</code> to any value other than 1.0,
+remember to declare <code>BSC5_Gamma</code> with that same value prior to calling either of these macros.
 
 <h4>Argument</h4>
 <table>
@@ -370,15 +421,23 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <h4>Additional Notes</h4>
 
-<p>B &minus; V values greater than about +4.06 result in oranges and reds that are too rich to be displayed by standard computer monitors&mdash;that is, the colors are outside the <a href="https://en.wikipedia.org/wiki/Gamut">gamut</a> of the sRGB color space. In HSL or HSV terms, the saturation is greater than 1. For such values, in-gamut approximations will be used.
+<p>B &minus; V values greater than about +4.06 result in oranges and reds that are too rich to be displayed by standard computer monitors&mdash;that is,
+the colors are outside the
+<a href="https://en.wikipedia.org/wiki/Gamut" target="_blank">gamut</a> of the sRGB color space.
+In HSL or HSV terms, the saturation is greater than 1.
+For such values, in-gamut approximations will be used.
 
-<p>The color calculation does not include any effects of the Earth’s atmosphere. The actual appearance of a star depends greatly on atmospheric conditions and the star’s altitude above the horizon.
+<p>The color calculation does not include any effects of the Earth’s atmosphere.
+The actual appearance of a star depends greatly on atmospheric conditions and the star’s altitude above the horizon.
 
 <p><a href="#toc">Table of contents</a><hr>
 
 <h3 id="BSC5_Greek_char">BSC5_Greek_char (s_Name)</h3>
 
-<p>Returns a lowercase Greek letter character, given the name of the letter. The name test is case insensitive. If there is no such Greek letter, the null string is returned. Lowercase final sigma (‘&#962;’) is neither recognized nor returned.
+<p>Returns a lowercase Greek letter character, given the name of the letter.
+The name test is case insensitive.
+If there is no such Greek letter, the null string is returned.
+Lowercase final sigma (‘&#962;’) is neither recognized nor returned.
 
 <p>Note: At the time this module is published, POV-Ray does not write Greek letters to text streams or text files.
 
@@ -396,12 +455,18 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <h3 id="BSC5_Seek_Bayer">BSC5_Seek_Bayer (s_Letter, Super, s_Const, s_Comp)</h3>
 
-<p>Returns the array row index of a star by <a href="https://en.wikipedia.org/wiki/Bayer_designation">Bayer designation</a>. If no multiple star component ID is given, then the index of the first entry found is returned. (As the search algorithm is subject to change, the results of ambiguous inputs should not be relied upon.) If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
+<p>Returns the array row index of a star by
+<a href="https://en.wikipedia.org/wiki/Bayer_designation" target="_blank">Bayer designation</a>.
+If no multiple star component ID is given, then the index of the first entry found is returned.
+(As the search algorithm is subject to change, the results of ambiguous inputs should not be relied upon.)
+If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
 
-<p>The BSC5 does not record Latin letter Bayer designations (except occasionally in the variable star ID field), so a search on these always returns <code>BSC5_NOT_FOUND</code>.
+<p>The BSC5 does not record Latin letter Bayer designations (except occasionally in the variable star ID field),
+so a search on these always returns <code>BSC5_NOT_FOUND</code>.
 
 <div class="note">
- <p><strong>Note:</strong> The catalog lists three binary stars whose individual components have separate entries but the same Bayer designation and no Aitken’s component ID. Because the components of each pair have the same Bayer search key, only one of the components is accessible to <code>BSC5_Seek_Bayer()</code>. These stars are:
+ <p><strong>Note:</strong> The catalog lists three binary stars whose individual components have separate entries but the same Bayer designation and no Aitken’s component ID.
+ Because the components of each pair have the same Bayer search key, only one of the components is accessible to <code>BSC5_Seek_Bayer()</code>. These stars are:
 
  <ul>
   <li>Iota Pictoris (&iota; Pic): HR 1563 and HR 1564
@@ -409,9 +474,11 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
   <li>Gamma Coronae Australis (&gamma; CrA): HR 7226 and HR 7227
  </ul>
 
- <p>In all three cases, the brighter component has the lower HR number, although for &pi; Lup and &gamma; CrA, the components of each pair are of near equal brightness. For &iota; Pic and &pi; Lup, the color data are combined and reported only in the brighter components (HR 1563 and HR 5605), respectively.
+ <p>In all three cases, the brighter component has the lower HR number, although for &pi; Lup and &gamma; CrA, the components of each pair are of near equal brightness.
+ For &iota; Pic and &pi; Lup, the color data are combined and reported only in the brighter components (HR 1563 and HR 5605), respectively.
 
- <p>As noted above, no guarantee is made for which component is returned by <code>BSC5_Seek_Bayer()</code>. These stars should be retrieved by a different method, such as by HR number.
+ <p>As noted above, no guarantee is made for which component is returned by <code>BSC5_Seek_Bayer()</code>.
+ These stars should be retrieved by a different method, such as by HR number.
 </div>
 
 <h4>Arguments</h4>
@@ -420,7 +487,9 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
  <tr>
   <td><code>s_Letter</code></td>
   <td>string</td>
-  <td>The Greek letter name, e.g., <code>"alpha"</code>. This argument is not case sensitive.</td>
+  <td>The Greek letter name, e.g., <code>"alpha"</code>.
+   This argument is not case sensitive.
+  </td>
  </tr><tr>
   <td><code>Super</code></td>
   <td>float</td>
@@ -428,11 +497,15 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
  </tr><tr>
   <td><code>s_Const</code></td>
   <td>string</td>
-  <td>The three-letter constellation abbreviation. This argument is case sensitive.</td>
+  <td>The three-letter constellation abbreviation.
+   This argument is case sensitive.
+  </td>
  </tr><tr>
   <td><code>s_Comp</code></td>
   <td>string</td>
-  <td>The multiple star component ID, or the null string for no component ID. This argument must be uppercase.</td>
+  <td>The multiple star component ID, or the null string for no component ID.
+   This argument must be uppercase.
+  </td>
  </tr>
 </table>
 
@@ -440,7 +513,8 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <h3 id="BSC5_Seek_Draper">BSC5_Seek_Draper (Number)</h3>
 
-<p>Returns the array row index of a star by Draper Catalogue (HD) number. If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
+<p>Returns the array row index of a star by Draper Catalogue (HD) number.
+If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
 
 <h4>Argument</h4>
 <table>
@@ -456,12 +530,20 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <h3 id="BSC5_Seek_Flamsteed">BSC5_Seek_Flamsteed (Number, s_Const, s_Comp)</h3>
 
-<p>Returns the array row index of a star by <a href="https://en.wikipedia.org/wiki/Flamsteed_designation">Flamsteed designation</a>. If no multiple star component ID is given, then the index of the first entry found is returned. (As the search algorithm is subject to change, the results of ambiguous inputs should not be relied upon.) If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
+<p>Returns the array row index of a star by
+<a href="https://en.wikipedia.org/wiki/Flamsteed_designation" target="_blank">Flamsteed designation</a>.
+If no multiple star component ID is given, then the index of the first entry found is returned.
+(As the search algorithm is subject to change, the results of ambiguous inputs should not be relied upon.)
+If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
 
 <div class="note">
- <p><strong>Note:</strong> The star 12 Aquarii (12 Aqr) is a binary star whose individual components have separate entries but the same Flamsteed designation and no Aitken’s component ID. Because they have the same Flamsteed search key, only one component is accessible to <code>BSC5_Seek_Flamsteed()</code>.
+ <p><strong>Note:</strong> The star 12 Aquarii (12 Aqr) is a binary star whose individual components have separate entries but the same Flamsteed designation and no Aitken’s component ID.
+ Because they have the same Flamsteed search key, only one component is accessible to <code>BSC5_Seek_Flamsteed()</code>.
 
- <p>As no guarantee is made for which component is returned by <code>BSC5_Seek_Flamsteed()</code>, these stars should be retrieved by a different method, such as by HR number. Their HR numbers are 5808 and 5809. HR 5809 is the brighter component, and the color data for both components are combined and reported only in HR 5809.
+ <p>As no guarantee is made for which component is returned by <code>BSC5_Seek_Flamsteed()</code>,
+ these stars should be retrieved by a different method, such as by HR number.
+ Their HR numbers are 5808 and 5809. HR 5809 is the brighter component,
+ and the color data for both components are combined and reported only in HR 5809.
 </div>
 
 <h4>Arguments</h4>
@@ -474,11 +556,15 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
  </tr><tr>
   <td><code>s_Const</code></td>
   <td>string</td>
-  <td>The three-letter constellation abbreviation. This argument is case sensitive.</td>
+  <td>The three-letter constellation abbreviation.
+   This argument is case sensitive.
+  </td>
  </tr><tr>
   <td><code>s_Comp</code></td>
   <td>string</td>
-  <td>The multiple star component ID, or the null string for no component ID. This argument must be uppercase.</td>
+  <td>The multiple star component ID, or the null string for no component ID.
+   This argument must be uppercase.
+  </td>
  </tr>
 </table>
 
@@ -486,7 +572,9 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <h3 id="BSC5_Seek_HR">BSC5_Seek_HR (Number)</h3>
 
-<p>Returns the array row index of a star by Harvard Revised Photometry Catalogue (HR) number. The HR number is the primary index of the Bright Star Catalogue. If the catalog number is invalid, <code>BSC5_NOT_FOUND</code> is returned.
+<p>Returns the array row index of a star by Harvard Revised Photometry Catalogue (HR) number.
+The HR number is the primary index of the Bright Star Catalogue.
+If the catalog number is invalid, <code>BSC5_NOT_FOUND</code> is returned.
 
 <h4>Argument</h4>
 <table>
@@ -502,19 +590,25 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <h3 id="BSC5_Seek_SAO">BSC5_Seek_SAO (Number, s_Comp)</h3>
 
-<p>Returns the array row index of a star by Smithsonian Astrophysical Observatory (SAO) number. If no multiple star component ID is given, then the index of the first entry found is returned. (As the search algorithm is subject to change, the results of ambiguous inputs should not be relied upon.) If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
+<p>Returns the array row index of a star by Smithsonian Astrophysical Observatory (SAO) number.
+If no multiple star component ID is given, then the index of the first entry found is returned.
+(As the search algorithm is subject to change, the results of ambiguous inputs should not be relied upon.)
+If the star is not in the BSC5, <code>BSC5_NOT_FOUND</code> is returned.
 
 <div class="note">
- <p><strong>Note:</strong> The catalog lists two binary stars whose individual components have separate entries but the same SAO number and no Aitken’s component ID. Because the components of each pair have the same SAO search key, only one of the components is accessible to <code>BSC5_Seek_SAO()</code>. These stars are:
+ <p><strong>Note:</strong> The catalog lists two binary stars whose individual components have separate entries but the same SAO number and no Aitken’s component ID.
+ Because the components of each pair have the same SAO search key, only one of the components is accessible to <code>BSC5_Seek_SAO()</code>. These stars are:
 
  <ul>
   <li>SAO 225426 (&pi; Lup): HR 5605 and HR 5606
   <li>SAO 210928 (&gamma; CrA): HR 7226 and HR 7227
  </ul>
 
- <p>In both cases, the brighter component has the lower HR number, although the components of each pair are of near equal brightness. For SAO 225426, the color data are combined and reported only in HR 5605.
+ <p>In both cases, the brighter component has the lower HR number, although the components of each pair are of near equal brightness.
+ For SAO 225426, the color data are combined and reported only in HR 5605.
 
- <p>As noted above, no guarantee is made for which component is returned by <code>BSC5_Seek_SAO()</code>. These stars should be retrieved by a different method, such as by HR number.
+ <p>As noted above, no guarantee is made for which component is returned by <code>BSC5_Seek_SAO()</code>.
+ These stars should be retrieved by a different method, such as by HR number.
 </div>
 
 <h4>Arguments</h4>
@@ -527,7 +621,9 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
  </tr><tr>
   <td><code>s_Comp</code></td>
   <td>string</td>
-  <td>The multiple star component ID, or the null string for no component ID. This argument must be uppercase.</td>
+  <td>The multiple star component ID, or the null string for no component ID.
+   This argument must be uppercase.
+  </td>
  </tr>
 </table>
 
@@ -537,17 +633,20 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <p>Makes certain changes to the BSC5 numeric array:
 <ul>
- <li>In 2000 July, Delta Scorpii (HR 5953) brightened significantly. Its entry is updated with new magnitude and B &minus; V values.
+ <li>In 2000 July, Delta Scorpii (HR 5953) brightened significantly.
+  Its entry is updated with new magnitude and B &minus; V values.
  <li>For recurrent nova T Coronae Borealis (HR 5958), the magnitude and B &minus; V fields are replaced with values from the BSC5 supplementary notes.
 </ul>
 
 <p><a href="#toc">Table of contents</a><hr>
 
-<h2 id="Functions">Function</h2>
+<h2 id="Functions">Functions</h2>
 
 <h3 id="BSC5_fn_Brightness">BSC5_fn_Brightness (x, y)</h3>
 
-<p>Returns a linear brightness value that corresponds to a magnitude. The returned value is relative to the brightness of a star of the magnitude specified by the second argument. For example, <code>BSC5_fn_Brightness (3.5, 5)</code> returns approximately 3.98, meaning that a 3.5 magnitude star is about 3.98 times brighter than a magnitude 5 star.
+<p>Returns a linear brightness value that corresponds to a magnitude.
+The returned value is relative to the brightness of a star of the magnitude specified by the second argument.
+For example, <code>BSC5_fn_Brightness (3.5, 5)</code> returns approximately 3.98, meaning that a 3.5 magnitude star is about 3.98 times brighter than a magnitude 5 star.
 
 <h4>Arguments</h4>
 <table>
@@ -565,6 +664,22 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <p><a href="#toc">Table of contents</a><hr>
 
+<h3 id="BSC5_fn_RA_to_degrees">BSC5_fn_RA_to_degrees (x)</h3>
+
+<p>Returns right ascension converted to degrees.
+
+<h4>Argument</h4>
+<table>
+ <tr><th>Formal Parameter</th> <th>Type</th> <th>Description</th></tr>
+ <tr>
+  <td><code>x</code></td>
+  <td>float</td>
+  <td>The right ascension in hours.</td>
+ </tr>
+</table>
+
+<p><a href="#toc">Table of contents</a><hr>
+
 <h2 id="Other_identifiers">Other Identifiers</h2>
 
 <h3>Reference Identifiers</h3>
@@ -574,8 +689,8 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
  <tr>
   <td><code>BRIGHTSTAR5_VERSION</code></td>
   <td>float</td>
-  <td>The BrightStar5 version, in case the scene file needs that information.</td>
-  <td>1.12</td>
+  <td>The BrightStar5 version.</td>
+  <td>1.2</td>
  </tr><tr>
   <td><code>BSC5_N</code></td>
   <td>float</td>
@@ -594,20 +709,23 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
  </tr>
 </table>
 
-<p>*A <a href="https://en.wikipedia.org/wiki/Black_box">black box</a> value.
+<p>*A <a href="https://en.wikipedia.org/wiki/Black_box" target="_blank">black box</a> value.
 
 <h3>Internal Identifiers</h3>
 
-<p>Any identifiers in <code>brightstar5.inc</code>, <code>brightstar5_data.inc</code>, and <code>brightstar5_index.inc</code> that are not documented in this manual are considered “private” or “protected,” and are subject to change or elimination in a future update.
+<p>Any identifiers in <code>brightstar5.inc</code>, <code>brightstar5_data.inc</code>, and <code>brightstar5_index.inc</code> that are not documented in this manual are considered “private,” and are subject to change or elimination in a future update.
 
 <p><a href="#toc">Table of contents</a><hr>
 
 <h2 id="About">About BrightStar5</h2>
 
 <address>
- <p>Copyright © 2017 &ndash; 2021 Richard Callwood III. Some rights reserved.
- <p>This library is free software; you can redistribute it and/or modify it under the terms of the <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html">GNU Lesser General Public License version 2.1</a> as published by the Free Software Foundation.
- <p>This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ <p>Copyright © 2017 &ndash; 2025 Richard Callwood III. Some rights reserved.
+ <p>This library is free software: you can redistribute it and/or modify it under the terms of the
+ <a href="https://www.gnu.org/licenses/lgpl-3.0.html" target="_blank">GNU Lesser General Public License</a>
+ as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ <p>This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 </address>
 
 <h3 id="Categories">Object Collection Categories</h3>
@@ -616,6 +734,9 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
  <li><strong>Areas of Interest</strong>
   <ul>
    <li>Space
+    <ul>
+     <li>Astronomy
+    </ul>
   </ul>
  <li><strong>Contribution Types</strong>
   <ul>
@@ -677,7 +798,7 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
   <td>2019 March 25</td>
   <td>
    <ul>
-    <li>An error check on the index file is corrected.
+    <li>Bug fix: An error check on the index file is corrected.
     <li>The messages to the debug stream verifying the inclusion of the include files are suppressed by default.
     <li>A POV-Ray version check is made for the <code>charset</code> statement, in accordance with POV-Ray 3.8 development.
    </ul>
@@ -686,8 +807,19 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
   <td>1.1.2</td> <td>2021 August 16</td>
   <td>
    <ul>
-    <li>The version check for <code>charset</code> is reverted, in accordance with the POV-Ray 3.8 beta versions.
+    <li>The version check for <code>charset</code> is reverted, in accordance with POV-Ray 3.8 beta revisions.
+    <li>The SDL files auto-detect the POV-Ray version.
     <li>The User Manual and license texts are updated for repositories other than lib.povray.org.
+   </ul>
+  </td>
+ </tr><tr>
+  <td>1.2</td> <td>2025 October 5</td>
+  <td>
+   <ul>
+    <li>Bug fix: The POV-Ray version auto-detection, inadvertently omitted from the main include file, is added to that file.
+    <li>A function to convert right ascension to degrees is added.
+    <li>A text file is added with source code and documentation for generating the data files.
+    <li>The license is upgraded to version 3 of the LGPL.
    </ul>
   </td>
  </tr>
@@ -695,18 +827,33 @@ To estimate the color of the star Betelgeuse (Alpha Orionis), you can use:
 
 <h3 id="Future">Future Plans</h3>
 
-<p>Obviously this module does not do a comprehensive data extraction of the BSC5. The direction this module takes in the future will depend, in part, on user feedback.
+<p>Obviously this module does not do a comprehensive data extraction of the BSC5.
+The direction this module takes in the future will depend, in part, on user feedback.
+
+<h3 id="Links">Links</h3>
+
+<ul>
+ <li><a href="https://lib.povray.org/searchcollection/index2.php?objectName=BrightStar5&amp;contributorTag=Cousin%20Ricky">Official BrightStar5 repository</a>
+  and <a href="https://github.com/CousinRicky/POV-BrightStar5">GitHub mirror</a>
+ <li><a href="https://news.povray.org/povray.object-collection/">Object Collection discussion</a>
+ <li><a href="https://heasarc.gsfc.nasa.gov/W3Browse/star-catalog/bsc5p.html" target="_blank">BSC5 browser</a> at the HEASARC archives (NASA)
+</ul>
 
 <h3 id="Acknowledgments">Acknowledgments</h3>
 
 <ul>
- <li>The data were obtained from Hoffleit, Dorrit and Wayne H. Warren Jr., <cite>The Bright Star Catalogue,</cite> preliminary 5th edition, source <a href="ftp://cdsarc.u-strasbg.fr/cats/V/50/">Centre de Données astronomiques de Strasbourg (FTP)</a>, mirrored at <a href="http://tdc-www.harvard.edu/catalogs/bsc5.html">Harvard University (HTTP)</a>. Used with oral permission.
+ <li>The data were obtained from Hoffleit, Dorrit and Wayne H. Warren Jr., <cite>The Bright Star Catalogue,</cite> preliminary 5th edition,
+  source <a href="https://cdsarc.u-strasbg.fr/viz-bin/cat/V/50" target="_blank">Centre de Données astronomiques de Strasbourg</a>,
+  mirrored at <a href="http://tdc-www.harvard.edu/catalogs/bsc5.html" target="_blank">Harvard University</a>. Used with oral permission.
  <li>Estimates of star colors were derived from surface temperature correlations determined in the following papers:
   <ul>
-   <li>For the bluest stars, Reed, B. Cameron (1998), “The Composite Observational-Theoretical HR Diagram,” <a href="https://rasc.ca/jrasc-1998-02"><cite>The Journal of the Royal Astronomical Society of Canada,</cite> February 1998, Volume 92, Number 1 [669]</a>, page 36 (h/t <a href="http://www.bogan.ca/astro/stars/star_lum.html">Larry Bogan of Cambridge Station, Nova Scotia</a>).
-   <li>For other stars, <a href="https://arxiv.org/pdf/1201.1809.pdf">Ballesteros, F. J. (2012), “New insights into black bodies,”</a> <a href="https://iopscience.iop.org/issue/0295-5075/97/3"><cite>EPL (Europhysics Letters),</cite> Volume 97, Number 3, February 2012</a>, article 34008.
+   <li>For the bluest stars, Reed, B. Cameron (1998), “The Composite Observational-Theoretical HR Diagram,”
+    <a href="https://rasc.ca/jrasc-1998-02" target="_blank"><cite>The Journal of the Royal Astronomical Society of Canada,</cite> February 1998, Volume 92, Number 1 [669]</a>, page 36
+    (h/t <a href="https://www.bogan.ca/astro/stars/star_lum.html" target="_blank">Larry Bogan of Cambridge Station, Nova Scotia</a>).
+   <li>For other stars, <a href="https://arxiv.org/pdf/1201.1809.pdf" target="_blank">Ballesteros, F. J. (2012), “New insights into black bodies,”</a>
+    <a href="https://iopscience.iop.org/issue/0295-5075/97/3" target="_blank"><cite>EPL (Europhysics Letters),</cite> Volume 97, Number 3, February 2012</a>, article 34008.
   </ul>
- <li>Star temperature estimates were converted to colors using <a href="http://www.ignorancia.org/index.php/technical/lightsys/">Lightsys IV</a>.
+ <li>Star temperature estimates were converted to colors using <a href="http://www.ignorancia.org/index.php?page=lightsys" target="_blank">Lightsys IV</a>.
 </ul>
 
 <p><a href="#toc">Table of contents</a>
